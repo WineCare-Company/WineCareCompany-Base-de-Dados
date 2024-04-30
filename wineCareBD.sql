@@ -20,13 +20,15 @@ insert into CadastroJuridico values
 (null, 'Vinhos do Sul', '11.222.111/0001-11', 'Ferdinando', 'vinhosdosuls@gmail.com', '11 12345-6712','vinho321', '11112-111', '1A', null),
 (null, 'Sabor unico', '22.111.111/0001-11', 'Fernanda', 'saborunico@gmail.com', '11 12345-8389', 'Vin213', '11111-121', '1023', null);
 
+select * from cadastroJuridico;
+
 create table vinicola(
 idVinicola int primary key auto_increment,
 nome varchar(45),
 CEP varchar(11),
 numero varchar(45),
 complemento varchar(45),
-qntBarril int,
+qtdBarril int,
 
 fkCadastro int,
 constraint fkCadastroVinicolas foreign key (fkCadastro) references CadastroJuridico (idCadastroJuridico)
@@ -36,6 +38,8 @@ insert into vinicola values
 (null, 'Dom vinho', '11111-111', '12', null, 40, 1),
 (null, 'Lis vinho', '11112-111', '1A', null, 56, 2),
 (null, 'Canteiro da uva', '11111-121', '1023', null, 70, 3);
+
+select * from vinicola;
 
 create table parametros(
 idParametros int primary key auto_increment,
@@ -47,6 +51,8 @@ umidadeMin float
 
 insert into parametros values 
 (null, 20, 15, 80, 50);
+
+select * from parametros;
 
 create table sensor(
 idSensor int primary key auto_increment,
@@ -65,6 +71,8 @@ insert into sensor values
 (null, 'DHT11', 30, 'Sim', 2, 1),
 (null, 'DHT11', 12, 'Não', 3, 1);
 
+select * from sensor;
+
 create table dadosCaptados(
 idDados int primary key auto_increment, 
 tempAmbiente float,
@@ -75,6 +83,8 @@ fkSensor int,
 constraint fkDadosSensor foreign key (fkSensor) references sensor(idSensor)
 );
 
+select * from dadosCaptados;
+
 select * from vinicola
 join CadastroJuridico
 on vinicola.fkCadastro = CadastroJuridico.idCadastroJuridico;
@@ -82,3 +92,24 @@ on vinicola.fkCadastro = CadastroJuridico.idCadastroJuridico;
 select * from sensor 
 join parametros
 on sensor.fkParametros = parametros.idParametros;
+
+select Cadastro.nomeEmpresa as NomeDaEmpresa,
+vinicola.nome as NomeVinicola,
+vinicola.qtdBarril
+from cadastroJuridico as Cadastro
+join vinicola
+on vinicola.fkCadastro = Cadastro.idCadastroJuridico;
+
+
+select sensor.nomeSensor as NomeSensor,
+parametros.*
+from sensor
+join parametros
+on parametros.idParametros = sensor.fkParametros;
+
+select sensor.*,
+dadosCaptados.*
+from sensor
+join dadosCaptados
+on sensor.idSensor = dadosCaptados.fkSensor;
+
