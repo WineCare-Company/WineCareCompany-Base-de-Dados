@@ -3,13 +3,13 @@ create database wineCare;
 use wineCare;
 
 create table CadastroJuridico(
-idCadastroJuridico int primary key auto_increment,
-nomeEmpresa varchar (45) not null unique,
-CNPJ varchar(45) not null unique,
-atualRepresentante varchar (45) not null,
-emailContato varchar(45) not null unique,
-telefoneContato varchar(45) not null unique,
-senha varchar (45)not null,
+idCadastroJuridico int primary key auto_increment, -- id
+nomeEmpresa varchar (45) not null unique, -- Nome da Empresa
+CNPJ varchar(45) not null unique, -- CNPJ
+atualRepresentante varchar (45) not null, -- Nome do representante da Empresa
+emailContato varchar(45) not null unique, -- E-mail do representante
+telefoneContato varchar(45) not null unique, -- telefone do representante disponivel para contato
+senha varchar (45)not null, 
 CEP varchar(45) not null,
 numero varchar (45) not null,
 complemento varchar(45)
@@ -24,14 +24,14 @@ select * from cadastroJuridico;
 
 create table vinicola(
 idVinicola int primary key auto_increment,
-nome varchar(45),
-CEP varchar(11),
+nome varchar(45), -- nome vinicola
+CEP varchar(11), -- endereco da vinicola dividido em 3 partes
 numero varchar(45),
 complemento varchar(45),
-qtdBarril int,
+qtdBarril int, -- Quantidade de barris da vinicola
 
-fkCadastro int,
-constraint fkCadastroVinicolas foreign key (fkCadastro) references CadastroJuridico (idCadastroJuridico)
+fkCadastro int, -- fk para puxar as informações da tabela CadastroJuridico
+constraint fkCadastroVinicolas foreign key (fkCadastro) references CadastroJuridico (idCadastroJuridico) 
 );
 
 insert into vinicola values 
@@ -42,26 +42,26 @@ insert into vinicola values
 select * from vinicola;
 
 create table parametros(
-idParametros int primary key auto_increment,
-tempMax float,
-tempMin float,
-umidadeMax float,
-umidadeMin float
+idParametros int primary key auto_increment, 
+tempMax float, -- temperatura maxima da vinicola
+tempMin float, -- temperatura minima da vinicola 
+umidadeMax float,  -- unidade minima da vinicola 
+umidadeMin float  -- unidade minima da vinicola 
 );
 
 insert into parametros values 
-(null, 20, 15, 80, 50);
+(null, 20, 15, 80, 60);
 
 select * from parametros;
 
 create table sensor(
 idSensor int primary key auto_increment,
-nomeSensor varchar(45),
-numeroBarril int,
-ligado char(3),
+nomeSensor varchar(45), -- nome do sensor
+numeroBarril int, -- numero do barril
+ligado char(3), -- sim ou não
 
-fkVinicola int,
-fkParametros int,
+fkVinicola int, -- fk para puxar informações da tabela vinicola
+fkParametros int, -- fk para puxar informações da tabela parametros
 constraint fkVinicolaSensor foreign key (fkVinicola) references vinicola (idVinicola),
 constraint fkParametrosSensor foreign key (fkParametros) references parametros (idParametros)
 );
@@ -75,11 +75,11 @@ select * from sensor;
 
 create table dadosCaptados(
 idDados int primary key auto_increment, 
-tempAmbiente float,
-umidadeAmbiente float,
-horarioData datetime default current_timestamp,
+tempAmbiente float, -- temperatura ambiente captada pelo sensor DH11 e inserida no banco
+umidadeAmbiente float, -- umidade ambiente captada pelo sensor DH11 e inserida no banco
+horarioData datetime default current_timestamp, -- horario que as informações foram inseridas
 
-fkSensor int,
+fkSensor int, -- fk para puxar informações da tabela sensor 
 constraint fkDadosSensor foreign key (fkSensor) references sensor(idSensor)
 );
 
@@ -112,4 +112,3 @@ dadosCaptados.*
 from sensor
 join dadosCaptados
 on sensor.idSensor = dadosCaptados.fkSensor;
-
