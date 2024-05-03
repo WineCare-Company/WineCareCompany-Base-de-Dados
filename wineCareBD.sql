@@ -1,5 +1,5 @@
 create database wineCare;
-
+xxxx
 use wineCare;
 
 -- Criação da tabela de cadastro de empresas
