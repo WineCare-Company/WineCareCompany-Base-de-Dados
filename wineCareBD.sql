@@ -1,17 +1,17 @@
 create database wineCare;
-xxxx
+
 use wineCare;
 
 -- Criação da tabela de cadastro de empresas
 create table cadastro(
 idCadastro int primary key auto_increment, -- id
 nomeEmpresa varchar (45) not null unique, -- Nome da Empresa
-CNPJ varchar(45) not null unique, -- CNPJ
+CNPJ char(14) not null unique, -- CNPJ
 atualRepresentante varchar (45) not null, -- Nome do representante da Empresa
+telefone1 varchar(11) not null unique, -- Telefone celular para contato com a empresa
+telefone1 varchar(11) unique,
 emailContato varchar(45) not null unique, -- E-mail do representante
-telefoneCel varchar(45) not null unique, -- Telefone celular para contato com a empresa
-telefoneFixo varchar(45) unique, -- Telefone fixo para contato com a empresa
-senha varchar (45)not null -- Senha para cadastro e login de cada empresa
+senha varchar (45) not null -- Senha para cadastro e login de cada empresa
 );
 
 -- Inserção de dados de empresas na tabela cadastro
@@ -20,17 +20,26 @@ insert into Cadastro values
 (null, 'Vinhos do Sul', '11.222.111/0001-11', 'Ferdinando', 'vinhosdosuls@gmail.com', '11 12345-6712', null, 'vinho321'),
 (null, 'Sabor unico', '22.111.111/0001-11', 'Fernanda', 'saborunico@gmail.com', '11 12345-8389', null, 'Vin213');
 
-select * from cadastroJuridico;
+select * from cadastro;
+
+create table endereco (
+idEndereco int primary key auto_increment,
+logradouro varchar(45),
+numero varchar(6),
+bairro varchar(45),
+cidade varchar(45),
+uf char(2),
+cep char (8),
+complemento varchar(45) );
 
 -- Cadastro das vinicolas de cada cadastro
 create table vinicola(
 idVinicola int primary key auto_increment, -- id
 nome varchar(45), -- nome vinicola
-CEP varchar(11), -- endereco da vinicola dividido em 3 partes
-numero varchar(45),
-complemento varchar(45),
 qtdBarril int, -- Quantidade de barris da vinicola
 
+fkEndereco int,
+constraint fkEnderecoVinicolas foreign key (fkEndereco) references endereco (idEndereco),
 fkCadastro int, -- fk para puxar as informações da tabela Cadastro
 constraint fkCadastroVinicolas foreign key (fkCadastro) references cadastro (idCadastro) 
 );
@@ -48,8 +57,8 @@ create table parametros(
 idParametros int primary key auto_increment, 
 tempMax float, -- temperatura maxima da vinicola
 tempMin float, -- temperatura minima da vinicola 
-umidadeMax float,  -- unidade minima da vinicola 
-umidadeMin float  -- unidade minima da vinicola 
+umidadeMax float,  -- umidade minima da vinicola 
+umidadeMin float  -- umidade minima da vinicola 
 );
 
 -- Inserção de dados ideias para a produção
@@ -61,7 +70,6 @@ select * from parametros;
 -- Tabela para inserir todos os  nossos sensores que estão instalados em cada vinícola
 create table sensor(
 idSensor int primary key auto_increment,
-nomeSensor varchar(45), -- nome do sensor
 numeroBarril int, -- numero do barril
 ligado char(3), -- sim ou não
 
@@ -73,9 +81,9 @@ constraint fkParametrosSensor foreign key (fkParametros) references parametros (
 
 --  inserção das condições atuais de cada sensor e atualização de suas fks
 insert into sensor values 
-(null, 'DHT11', 12, 'Sim', 1, 1),
-(null, 'DHT11', 130, 'Sim', 2, 1),
-(null, 'DHT11', 125, 'Não', 3, 1);
+(default, 1, 'Sim', 1, 1),
+(default, 2, 'Sim', 2, 1),
+(default, 3, 'Não', 3, 1);
 
 select * from sensor;
 
@@ -92,7 +100,6 @@ constraint fkDadosSensor foreign key (fkSensor) references sensor(idSensor)
 
 select * from dadosCaptados;
 
-
 -- Selecionando todas as informações da tabela vinicola e da tabela cadastro onde a fkCadastro seja igual ao idCadastro
 select * from vinicola
 join cadastro
@@ -102,7 +109,6 @@ on vinicola.fkCadastro = Cadastro.idCadastro;
 select * from sensor 
 join parametros
 on sensor.fkParametros = parametros.idParametros;
-
 
 -- Selecionando o nome da empresa, nome da vinicola e a quantidade de barris que cada vinicola possui onde a fkCadastro seja igual ao idCadastro
 select Cadastro.nomeEmpresa as NomeDaEmpresa,
