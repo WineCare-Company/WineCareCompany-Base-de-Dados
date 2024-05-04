@@ -1,126 +1,123 @@
-create database wineCare;
+-- Criação do banco de dados wineCare
+CREATE DATABASE wineCare;
 
-use wineCare;
+-- Seleção do banco de dados wineCare para uso
+USE wineCare;
 
 -- Criação da tabela de cadastro de empresas
-create table cadastro(
-idCadastro int primary key auto_increment, -- id
-nomeEmpresa varchar (45) not null unique, -- Nome da Empresa
-CNPJ char(14) not null unique, -- CNPJ
-atualRepresentante varchar (45) not null, -- Nome do representante da Empresa
-telefone1 varchar(11) not null unique, -- Telefone celular para contato com a empresa
-telefone1 varchar(11) unique,
-emailContato varchar(45) not null unique, -- E-mail do representante
-senha varchar (45) not null -- Senha para cadastro e login de cada empresa
+CREATE TABLE cadastro(
+    idCadastro INT PRIMARY KEY AUTO_INCREMENT, -- ID do cadastro, chave primária
+    nomeEmpresa VARCHAR(45) NOT NULL UNIQUE, -- Nome da Empresa, deve ser único
+    CNPJ CHAR(14) NOT NULL UNIQUE, -- CNPJ da empresa, formato fixo de 14 caracteres, deve ser único
+    atualRepresentante VARCHAR(45) NOT NULL, -- Nome do representante atual da empresa
+    telefone1 CHAR(11) NOT NULL UNIQUE, -- Telefone celular para contato
+    telefone2 CHAR(11), -- Segundo número de telefone, ou telefone reserva
+    emailContato VARCHAR(45) NOT NULL UNIQUE, -- E-mail do representante, deve ser único
+    senha VARCHAR(45) NOT NULL -- Senha para acesso ao sistema
 );
 
--- Inserção de dados de empresas na tabela cadastro
-insert into Cadastro values 
-(null, 'Vinho Fino', '11.111.111/0001-11', 'Fernando', 'vinhosfinos@gmail.com', '11 12345-6789', null, 'vinho123'),
-(null, 'Vinhos do Sul', '11.222.111/0001-11', 'Ferdinando', 'vinhosdosuls@gmail.com', '11 12345-6712', null, 'vinho321'),
-(null, 'Sabor unico', '22.111.111/0001-11', 'Fernanda', 'saborunico@gmail.com', '11 12345-8389', null, 'Vin213');
+-- Inserção de dados na tabela de cadastro de empresas
+INSERT INTO cadastro(nomeEmpresa, CNPJ, atualRepresentante, telefone1, emailContato, senha) VALUES 
+    ('Vinho Fino', '11111111000111', 'Fernando', '11123456789', 'vinhosfinos@gmail.com', 'vinho123'),
+    ('Vinhos do Sul', '11222111000111', 'Ferdinando', '11123456712', 'vinhosdosuls@gmail.com', 'vinho321'),
+    ('Sabor Unico', '22111111000111', 'Fernanda', '11123458389', 'saborunico@gmail.com', 'Vin213');
 
-select * from cadastro;
+-- Exibição dos dados da tabela cadastro
+SELECT * FROM cadastro;
 
-create table endereco (
-idEndereco int primary key auto_increment,
-logradouro varchar(45),
-numero varchar(6),
-bairro varchar(45),
-cidade varchar(45),
-uf char(2),
-cep char (8),
-complemento varchar(45) );
-
--- Cadastro das vinicolas de cada cadastro
-create table vinicola(
-idVinicola int primary key auto_increment, -- id
-nome varchar(45), -- nome vinicola
-qtdBarril int, -- Quantidade de barris da vinicola
-
-fkEndereco int,
-constraint fkEnderecoVinicolas foreign key (fkEndereco) references endereco (idEndereco),
-fkCadastro int, -- fk para puxar as informações da tabela Cadastro
-constraint fkCadastroVinicolas foreign key (fkCadastro) references cadastro (idCadastro) 
+-- Criação da tabela de endereços
+CREATE TABLE endereco (
+    idEndereco INT PRIMARY KEY AUTO_INCREMENT, -- ID do endereço, chave primária e auto-incremental
+    logradouro VARCHAR(45), -- Logradouro do endereço
+    numero VARCHAR(6), -- Número no endereço
+    bairro VARCHAR(45), -- Bairro
+    cidade VARCHAR(45), -- Cidade
+    uf CHAR(2), -- Unidade Federativa (Estado), 2 caracteres
+    cep CHAR(8), -- CEP, formato fixo de 8 caracteres
+    complemento VARCHAR(45) -- Complemento do endereço
 );
 
--- Inserção de dados na tabela vinicola de cada vinicola do cadastro
-insert into vinicola values 
-(null, 'Dom vinho', '11111-111', '12', null, 232, 1),
-(null, 'Lis vinho', '11112-111', '1A', null, 234, 2),
-(null, 'Canteiro da uva', '11111-121', '1023', null, 123, 3);
-
-select * from vinicola;
-
--- Tabela contendo os parametros ideias para a produção do vinho
-create table parametros(
-idParametros int primary key auto_increment, 
-tempMax float, -- temperatura maxima da vinicola
-tempMin float, -- temperatura minima da vinicola 
-umidadeMax float,  -- umidade minima da vinicola 
-umidadeMin float  -- umidade minima da vinicola 
+-- Criação da tabela de vinícolas
+CREATE TABLE vinicola(
+    idVinicola INT PRIMARY KEY AUTO_INCREMENT, -- ID da vinícola, chave primária e auto-incremental
+    nome VARCHAR(45), -- Nome da vinícola
+    qtdBarril INT, -- Quantidade de barris na vinícola
+    fkEndereco INT, -- Chave estrangeira referenciando o ID do endereço
+    fkCadastro INT, -- Chave estrangeira referenciando o ID do cadastro da empresa
+    CONSTRAINT fkEnderecoVinicolas FOREIGN KEY (fkEndereco) REFERENCES endereco (idEndereco),
+    CONSTRAINT fkCadastroVinicolas FOREIGN KEY (fkCadastro) REFERENCES cadastro (idCadastro)
 );
 
--- Inserção de dados ideias para a produção
-insert into parametros values 
-(null, 20, 15, 80, 60);
-
-select * from parametros;
-
--- Tabela para inserir todos os  nossos sensores que estão instalados em cada vinícola
-create table sensor(
-idSensor int primary key auto_increment,
-numeroBarril int, -- numero do barril
-ligado char(3), -- sim ou não
-
-fkVinicola int, -- fk para puxar informações da tabela vinicola
-fkParametros int, -- fk para puxar informações da tabela parametros
-constraint fkVinicolaSensor foreign key (fkVinicola) references vinicola (idVinicola),
-constraint fkParametrosSensor foreign key (fkParametros) references parametros (idParametros)
+-- Criação da tabela de parâmetros ideais para a produção do vinho
+CREATE TABLE parametros(
+    idParametros INT PRIMARY KEY AUTO_INCREMENT, 
+    tempMax FLOAT, -- Temperatura máxima ideal
+    tempMin FLOAT, -- Temperatura mínima ideal
+    umidadeMax FLOAT, -- Umidade máxima ideal
+    umidadeMin FLOAT -- Umidade mínima ideal
 );
 
---  inserção das condições atuais de cada sensor e atualização de suas fks
-insert into sensor values 
-(default, 1, 'Sim', 1, 1),
-(default, 2, 'Sim', 2, 1),
-(default, 3, 'Não', 3, 1);
+-- Inserção de dados na tabela de parâmetros ideais
+INSERT INTO parametros VALUES 
+    (NULL, 20, 15, 80, 60);
 
-select * from sensor;
+-- Exibição dos dados da tabela parametros
+SELECT * FROM parametros;
 
--- Tabela interligada com os dados recebidos do arduino para implantação no Banco de dados 
-create table dadosCaptados(
-idDados int primary key auto_increment, 
-temperaturaAmbiente float, -- temperatura ambiente captada pelo sensor DH11 e inserida no banco
-umidadeAmbiente float, -- umidade ambiente captada pelo sensor DH11 e inserida no banco
-horarioData datetime default current_timestamp, -- horario que as informações foram inseridas
-
-fkSensor int, -- fk para puxar informações da tabela sensor 
-constraint fkDadosSensor foreign key (fkSensor) references sensor(idSensor)
+-- Criação da tabela de sensores instalados nas vinícolas
+CREATE TABLE sensor(
+    idSensor INT PRIMARY KEY AUTO_INCREMENT, 
+    numeroBarril INT, -- Número do barril onde o sensor está instalado
+    ligado CHAR(3), -- Status do sensor ('Sim' ou 'Não')
+    fkVinicola INT, -- Chave estrangeira para a vinícola
+    fkParametros INT, -- Chave estrangeira para os parâmetros
+    CONSTRAINT fkVinicolaSensor FOREIGN KEY (fkVinicola) REFERENCES vinicola (idVinicola),
+    CONSTRAINT fkParametrosSensor FOREIGN KEY (fkParametros) REFERENCES parametros (idParametros)
 );
 
-select * from dadosCaptados;
+-- Inserção de dados na tabela de sensores
+INSERT INTO sensor VALUES 
+    (DEFAULT, 1, 'Sim', 1, 1),
+    (DEFAULT, 2, 'Sim', 2, 1),
+    (DEFAULT, 3, 'Não', 3, 1);
 
--- Selecionando todas as informações da tabela vinicola e da tabela cadastro onde a fkCadastro seja igual ao idCadastro
-select * from vinicola
-join cadastro
-on vinicola.fkCadastro = Cadastro.idCadastro;
+-- Exibição dos dados da tabela sensor
+SELECT * FROM sensor;
 
--- Selecionando todas as informações da tabela sensor e da tabela parametros onde a fkParamettros tem que ser igual ao idParametros
-select * from sensor 
-join parametros
-on sensor.fkParametros = parametros.idParametros;
+-- Criação da tabela de dados captados pelos sensores
+CREATE TABLE dadosCaptados(
+    idDados INT PRIMARY KEY AUTO_INCREMENT,
+    temperaturaAmbiente FLOAT, -- Temperatura ambiente captada pelo sensor
+    umidadeAmbiente FLOAT, -- Umidade ambiente captada pelo sensor
+    horarioData DATETIME DEFAULT CURRENT_TIMESTAMP, -- Data e hora da captura dos dados
+    fkSensor INT, -- Chave estrangeira referenciando o ID do sensor
+    CONSTRAINT fkDadosSensor FOREIGN KEY (fkSensor) REFERENCES sensor(idSensor)
+);
 
--- Selecionando o nome da empresa, nome da vinicola e a quantidade de barris que cada vinicola possui onde a fkCadastro seja igual ao idCadastro
-select Cadastro.nomeEmpresa as NomeDaEmpresa,
-vinicola.nome as NomeVinicola,
+-- Exibição dos dados captados
+SELECT * FROM dadosCaptados;
+
+-- Consulta interligada das informações das vinícolas com os cadastros das empresas
+SELECT * FROM vinicola
+JOIN cadastro
+ON vinicola.fkCadastro = cadastro.idCadastro;
+
+-- Consulta interligada das informações dos sensores com os parâmetros
+SELECT * FROM sensor 
+JOIN parametros
+ON sensor.fkParametros = parametros.idParametros;
+
+-- Consulta específica para nome da empresa, vinícola e quantidade de barris
+SELECT cadastro.nomeEmpresa AS NomeDaEmpresa,
+vinicola.nome AS NomeVinicola,
 vinicola.qtdBarril
-from cadastro as Cadastro
-join vinicola
-on vinicola.fkCadastro = Cadastro.idCadastro;
+FROM cadastro
+JOIN vinicola
+ON vinicola.fkCadastro = cadastro.idCadastro;
 
--- Selecionando o nome do sensor e todos os dados da tabela parametros onde o idParametros seja igual a fkParametros 
-select sensor.nomeSensor as NomeSensor,
+-- Consulta específica para nome do sensor e todos os dados de parâmetros
+SELECT sensor.idSensor AS NomeSensor,
 parametros.*
-from sensor
-join parametros
-on parametros.idParametros = sensor.fkParametros;
+FROM sensor
+JOIN parametros
+ON parametros.idParametros = sensor.fkParametros;
