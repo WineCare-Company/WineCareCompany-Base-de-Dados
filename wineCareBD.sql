@@ -93,7 +93,7 @@ CREATE TABLE avisos (
 idAviso INT PRIMARY KEY AUTO_INCREMENT,
 descricaoAvisos VARCHAR(45),
 fkSensor INT,
-CONSTRAINT fkSensorAvisos FOREIGN KEY fkSensor REFERENCES sensor(idSensor)
+CONSTRAINT fkSensorAvisos FOREIGN KEY (fkSensor) REFERENCES sensor(idSensor)
 );
 
 
@@ -155,7 +155,7 @@ JOIN sensor ON vinicola.idVinicola = sensor.fkVinicola
 JOIN parametros ON sensor.fkParametros = parametros.idParametros
 JOIN dadosCaptados ON sensor.idSensor = dadosCaptados.fkSensor;
 
-
+-- Consulta dos sensores nas vinicolas, juntamente com seus dados captados
 SELECT 
     sensor.idSensor AS ID_Sensor,
     vinicola.nome AS Nome_Vinicola,
