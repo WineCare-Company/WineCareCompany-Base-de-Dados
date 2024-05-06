@@ -89,6 +89,14 @@ INSERT INTO sensor (numeroBarril, ligado, fkVinicola, fkParametros) VALUES
     (5, 'Sim', 1, 1);
 
 
+CREATE TABLE avisos (
+idAviso INT PRIMARY KEY AUTO_INCREMENT,
+descricaoAvisos VARCHAR(45),
+fkSensor INT,
+CONSTRAINT fkSensorAvisos FOREIGN KEY fkSensor REFERENCES sensor(idSensor)
+);
+
+
 -- Exibição dos dados da tabela sensor
 SELECT * FROM sensor;
 
