@@ -11,7 +11,6 @@ CREATE TABLE cadastro(
     CNPJ CHAR(14) NOT NULL UNIQUE, -- CNPJ da empresa, formato fixo de 14 caracteres, deve ser único
     atualRepresentante VARCHAR(45) NOT NULL, -- Nome do representante atual da empresa
     telefone1 CHAR(11) NOT NULL UNIQUE, -- Telefone celular para contato
-    telefone2 CHAR(11), -- Segundo número de telefone, ou telefone reserva, sendo opcional
     emailContato VARCHAR(45) NOT NULL UNIQUE, -- E-mail do representante, deve ser único
     senha VARCHAR(45) NOT NULL -- Senha para acesso ao sistema
 );
