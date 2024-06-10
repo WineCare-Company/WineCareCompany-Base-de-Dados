@@ -60,10 +60,10 @@ CREATE TABLE parametrosIdeais (
 );
 
 CREATE TABLE dadosCaptados (
-  idDados INT,
+  idDados INT AUTO_INCREMENT,
   temperaturaAmbiente FLOAT NULL,
   umidadeAmbiente FLOAT NULL,
-  horarioData DATETIME,
+  horarioData DATETIME DEFAULT CURRENT_TIMESTAMP,
   fkSensor INT,
   fkParametros INT,
   PRIMARY KEY (idDados, fkSensor),
