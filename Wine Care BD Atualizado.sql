@@ -76,16 +76,18 @@ CREATE TABLE dadosCaptados (
 );
 
 CREATE TABLE Aviso (
-  idAviso INT NOT NULL,
+  idAviso INT auto_increment primary key,
   descricaoAviso VARCHAR(45) NOT NULL,
-  horarioAviso DATETIME NULL,
-  fkDados INT NOT NULL,
-  fkSensor INT NOT NULL,
-  PRIMARY KEY (idAviso, fkDados, fkSensor),
-  CONSTRAINT fk_Aviso_dadosCaptados1
-    FOREIGN KEY (fkDados, fkSensor)
-    REFERENCES dadosCaptados (idDados, fkSensor)
+  horarioAviso DATETIME DEFAULT CURRENT_TIMESTAMP,
+  fkDados INT,
+  CONSTRAINT fkDadosAviso
+    FOREIGN KEY (fkDados)
+    REFERENCES dadosCaptados (idDados)
 );
+
+drop table Aviso;
+insert into Aviso values
+(null, alertaVermelho, null, null);
 
 CREATE TABLE Barril (
   idBarril INT NOT NULL AUTO_INCREMENT,
